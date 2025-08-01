@@ -1,0 +1,14 @@
+{
+    "presets": [
+        ["@babel/preset-env", {
+            "modules": false, // This is crucial for ESM output
+            "ignore": [
+                "./src/ignored-file.js", // Ignores a specific file
+                "./src/temp-files/**", // Ignores all files within a 'temp-files' directory
+                "**/__tests__/**", // Ignores all '__tests__' directories anywhere in the project
+                "**/*.test.js",
+                "**/node_modules/**" // Often ignored by default, but can be explicitly listed
+            ]
+        }]
+    ]
+}

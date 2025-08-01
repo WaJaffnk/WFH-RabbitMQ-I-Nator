@@ -1,0 +1,43 @@
+services:
+  rabbit-setup-service:
+    build: rabbitMq/rabbitServerSetup/
+    container_name: rabbit-setup
+    restart: on-failure
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    links:
+      - rabbitmq
+    
+  rabbitmq:
+    develop:
+      watch:
+        - action: sync+restart # Sync changes and restart the service
+          path: ./rabbitMq # Path to watch
+          target: /app
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: wajaffnk
+      RABBITMQ_DEFAULT_PASS: wajaffnk
+    volumes:
+      - rabbitmq-lib:/var/lib/rabbitmq/
+      - rabbitmq-log:/var/log/rabbitmq
+      - type: bind
+        source: ./rabbitMq
+        target: /app
+    healthcheck:
+      test: rabbitmq-diagnostics  check_port_connectivity
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+volumes:
+  rabbitmq-lib:
+    driver: local
+  rabbitmq-log:
+    driver: local

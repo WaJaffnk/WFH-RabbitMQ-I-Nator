@@ -1,6 +1,6 @@
-const LogLevel = require("./LogLevel");
-const LogCategory = require("./LogCategory")
-const { uuidv4 } = require('uuid');
+import LogLevel from "./LogLevel.js"
+import LogCategory from "./LogCategory.js"
+import { v4 as uuidv4 } from 'uuid';
 
 class LogMessage {
     constructor(id, messageId, createdTimeStamp, logLevel, category, message, publishingService, consumingService ){
@@ -56,4 +56,4 @@ class LogMessage {
 
 }
 
-module.exports = LogMessage
+export default LogMessage

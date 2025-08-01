@@ -4,4 +4,4 @@ const LogLevel = {
     WARNING: "7cfbd5dd-a746-40b9-b390-4bd9b31cd6df",
     ERROR: "1fda1a86-3c4c-443d-bd67-ba52244a6040"
 }
-module.exports = LogLevel
+export default LogLevel;

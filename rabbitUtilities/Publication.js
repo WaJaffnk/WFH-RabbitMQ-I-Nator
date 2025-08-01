@@ -1,5 +1,5 @@
-import { LogLevel } from "./LogLevel";
-import { LogCategory } from "./LogCategory";
+import LogLevel from "./LogLevel.js";
+import LogCategory from "./LogCategory.js";
 import LogMessage from "./LogMessage.js";
 import RabbitServiceBase from "./RabbitServiceBase.js"
 import amqp from 'amqplib';
@@ -12,6 +12,7 @@ class Publication extends RabbitServiceBase {
         this.exchangeName = exchangeName;
         this.queueName = queueName;
         this.connection = null;
+        this.channel = null;
     }
 
     async publish(message, targetService="undefined", logLevel=LogLevel.DEBUG, logCategory=LogCategory.JsonMessage){
@@ -24,7 +25,7 @@ class Publication extends RabbitServiceBase {
             let logMessage = new LogMessage(null, null, null, logLevel, logCategory, message, this.serviceName,  targetService);        
             let logMessageJson = logMessage.toJson();
             this.log("PUBLISHING MESSAGE: ", logMessageJson);
-            await this.connect.sendToQueue(this.queueName, Buffer.from(logMessageJson));
+            await this.channel.sendToQueue(this.queueName, Buffer.from(logMessageJson));
             this.log(`SETUP PUBLICATION complete - exchange=${this.exchangeName}, queue=${this.queueName}`);
         } catch (error) {
             this.log('ERROR publishing to RabbitMQ:', true, error);
@@ -33,13 +34,14 @@ class Publication extends RabbitServiceBase {
 
     async connect(){
         try {
-            this.log(`publication attempting to start; exchange=${this.exchangeName}, queue=${this.queueName}`);
+            this.log(`publication attempting to start; URL: ${this.rabbitUrl} exchange=${this.exchangeName}, queue=${this.queueName}`);
             this.connection = await amqp.connect(this.rabbitUrl);
             this.log(`Creating channel`)
             
             await this.connection.createChannel()
                 .then(channel => {
                     this.log('Asserting Queue')
+                    this.channel = channel;
                     channel.assertQueue(this.queueName, { durable: true }, (error) => {
                         this.log("Queue Assertion ");
                         if (error) {

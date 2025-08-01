@@ -1,9 +1,15 @@
+import Subscription from './subscription.js'
+import Publication from './Publication.js'
+import LogLevel from './LogLevel.js'
+import LogCategory from './LogCategory.js'
+import ServiceName from './ServiceName.js'
+import LogMessage from './LogMessage.js'
 
-module.exports = {
-    Subscription: require('./subscription'),
-    Publication: require('./Publication'),
-    LogLevel: require('./LogLevel'),
-    LogCategory: require('./LogCategory'),
-    ServiceName: require('./ServiceName'),
-    LogMessage: require('./LogMessage')
+export {
+    Subscription, 
+    Publication,
+    LogLevel,
+    LogCategory,
+    ServiceName,
+    LogMessage
 };

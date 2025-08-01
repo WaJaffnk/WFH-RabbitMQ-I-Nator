@@ -1,59 +1,28 @@
 const path = require('path');
+const nodeExternals = require('webpack-node-externals');
 
-module.exports = [
-  // CommonJS output
-  {
-    entry: './index.js',
-    externals: {
-      amqplib: 'commonjs amqplib', //  Ensures amqplib is treated as an external CommonJS module
-    },
-    output: {
-      filename: 'index.cjs', // Output filename
-      path: path.resolve(__dirname, ''),
-      libraryTarget: 'commonjs2'
-    },
-    module: {
-      rules: [
-        {
-          test: /\.js$/,
-          exclude: /node_modules/,
-          use: {
-            loader: 'babel-loader',
-            options: {
-              presets: [['@babel/preset-env', { modules: 'commonjs' }]]
-            }
-          }
-        }
-      ]
-    }
+
+module.exports = {
+  entry: path.resolve(__dirname, "index.js"),
+  externalsPresets: { node: true },
+  externals: [nodeExternals({
+    allowlist: ['amqplib']
+  })],
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "index_bundle.js",
+    library: "$",
+    libraryTarget: "umd",
+    globalObject: "this"
   },
-  // ES Modules output
-  {
-    entry: './index.js',
-    externals: {
-      amqplib: 'commonjs amqplib', //  Ensures amqplib is treated as an external CommonJS module
-    },
-    output: {
-      filename: 'index.mjs', // Output filename
-      path: path.resolve(__dirname, ''),
-      libraryTarget: 'module'
-    },
-    experiments: {
-      outputModule: true
-    },
-    module: {
-      rules: [
-        {
-          test: /\.js$/,
-          exclude: /node_modules/,
-          use: {
-            loader: 'babel-loader',
-            options: {
-              presets: [['@babel/preset-env', { modules: false }]]
-            }
-          }
-        }
-      ]
-    }
-  }
-];
+  module: {
+    rules: [
+      {
+        test: /.(js)$/,
+        exclude: /(\.test\.js$|__tests__)/,
+        use: "babel-loader",
+      },
+    ],
+  },
+  mode: "development",
+}

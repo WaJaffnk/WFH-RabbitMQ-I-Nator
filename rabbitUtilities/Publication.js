@@ -1,6 +1,3 @@
-import LogLevel from "./LogLevel.js";
-import LogCategory from "./LogCategory.js";
-import LogMessage from "./LogMessage.js";
 import RabbitServiceBase from "./RabbitServiceBase.js"
 import amqp from 'amqplib';
 
@@ -15,17 +12,19 @@ class Publication extends RabbitServiceBase {
         this.channel = null;
     }
 
-    async publish(message, targetService="undefined", logLevel=LogLevel.DEBUG, logCategory=LogCategory.JsonMessage){
-        if(!this.connection){
+    async publish(logMessage){
+        let retryAttempt = 5;
+        while(!this.connection){
             await this.connect();
+            retryAttempt--;
+            if(retryAttempt == 0){
+                throw new Error("Unable to connect to Rabbit MQ");
+            }
         }
 
         try {
-            this.log("CREATING LOG MESSAGE");
-            let logMessage = new LogMessage(null, null, null, logLevel, logCategory, message, this.serviceName,  targetService);        
-            let logMessageJson = logMessage.toJson();
-            this.log("PUBLISHING MESSAGE: ", logMessageJson);
-            await this.channel.sendToQueue(this.queueName, Buffer.from(logMessageJson));
+            this.log("PUBLISHING MESSAGE: ", logMessage);
+            await this.channel.sendToQueue(this.queueName, Buffer.from(logMessage));
             this.log(`SETUP PUBLICATION complete - exchange=${this.exchangeName}, queue=${this.queueName}`);
         } catch (error) {
             this.log('ERROR publishing to RabbitMQ:', true, error);

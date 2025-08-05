@@ -4,6 +4,7 @@ import LogLevel from './LogLevel.js'
 import LogCategory from './LogCategory.js'
 import ServiceName from './ServiceName.js'
 import LogMessage from './LogMessage.js'
+import LogManager from './LogManager.js'
 
 export {
     Subscription, 
@@ -11,5 +12,6 @@ export {
     LogLevel,
     LogCategory,
     ServiceName,
-    LogMessage
+    LogMessage,
+    LogManager
 };

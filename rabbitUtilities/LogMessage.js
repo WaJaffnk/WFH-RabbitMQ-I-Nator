@@ -3,10 +3,10 @@ import LogCategory from "./LogCategory.js"
 import { v4 as uuidv4 } from 'uuid';
 
 class LogMessage {
-    constructor(id, messageId, createdTimeStamp, logLevel, category, message, publishingService, consumingService ){
-        this.id = id;
+    constructor(messageId, createdTimeStamp, logLevel, category, message, publishingService, consumingService ){
         this.messageId = messageId ?? uuidv4();
-        this.createdTimeStamp = createdTimeStamp ?? Date.UTC();        
+        //knex will tolerate an iso string - to convert to appropriate timezone (note Date.now() captures timezone.
+        this.createdTimeStamp = createdTimeStamp ?? new Date().toISOString(); 
         if(Object.values(LogLevel).includes(logLevel)){
             this.logLevel = logLevel;
         } else {
@@ -28,7 +28,6 @@ class LogMessage {
 
     toJson(){
         let jsonObject = {
-            id: this.id, 
             messageId: this.messageId, 
             createdTimeStamp: this.createdTimeStamp, 
             logLevel: this.logLevel, 
@@ -40,18 +39,24 @@ class LogMessage {
         return JSON.stringify(jsonObject);
     }
 
+    static fromJson(json){
+        let message = JSON.parse(json);
+        let logMessage = new LogMessage(message.messageId, message.createdTimeStamp, message.logLevel, message.category, message.message, message.publishingService, message.consumingService);
+        return logMessage
+    }
+
     toLogTableInsert(){
-        let jsonObject = {
+        let result = {
             id: this.id, 
             message_id: this.messageId, 
-            created_time_stamp: this.createdTimeStamp, 
-            level: this.logLevel,  
-            category: this.category,
+            created_timestamp: this.createdTimeStamp, 
+            log_level: this.logLevel,  
+            log_category: this.category,
             message: this.message,
             publishing_service_name: this.publishingService,
             consuming_service_name: this.consumingService
         }
-        return JSON.stringify(jsonObject);
+        return result;
     }
 
 }

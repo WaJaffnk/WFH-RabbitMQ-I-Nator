@@ -1,13 +1,13 @@
 services:
   rabbit-setup-service:
-    build: rabbitMq/rabbitServerSetup/
+    build: rabbitServerSetup/
     container_name: rabbit-setup
     restart: on-failure
     depends_on:
       rabbitmq:
         condition: service_healthy
-    links:
-      - rabbitmq
+    networks:
+      - wfh-rabbit-inator
     
   rabbitmq:
     develop:
@@ -35,6 +35,13 @@ services:
       interval: 10s
       timeout: 10s
       retries: 10
+    networks:
+      - wfh-rabbit-inator
+
+networks:
+  wfh-rabbit-inator:
+    driver: bridge
+    name: rabbitmq-network
 
 volumes:
   rabbitmq-lib:

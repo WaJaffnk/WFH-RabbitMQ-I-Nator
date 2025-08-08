@@ -21,7 +21,7 @@ class LogManager {
         console.log("The logger", logger);
         //establish default Log Level
         logger.level = logLevel || LogLevel.DEBUG;
-        logger.debug("Logger is created and available.")
+        logger.debug(`Logger for ${appenderName} is created and available. `)
         this.logger = logger;
     }
 

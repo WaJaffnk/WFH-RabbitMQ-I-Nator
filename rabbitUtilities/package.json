@@ -1,6 +1,6 @@
 {
   "name": "wfh-rabbit-utilities",
-  "version": "1.0.80",
+  "version": "1.0.81",
   "description": "Rabbit Utilities to make pub/sub easier",
   "main": "dist/index_bundle.js",
   "scripts": {

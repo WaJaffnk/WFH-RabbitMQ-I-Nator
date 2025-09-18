@@ -7,41 +7,41 @@ services:
       rabbitmq:
         condition: service_healthy
     networks:
-      - wfh-rabbit-inator
-    
+      - haddoservnet
+    environment:
+      DEFAULT_RABBIT_URL: ${DEFAULT_RABBIT_URL}
+
   rabbitmq:
-    develop:
-      watch:
-        - action: sync+restart # Sync changes and restart the service
-          path: ./rabbitMq # Path to watch
-          target: /app
+    # watch:
+    #   - action: sync+restart # Sync changes and restart the service
+    #     path: ./rabbitMq # Path to watch
+    #     target: /app
     image: rabbitmq:3-management
     container_name: rabbitmq
     restart: always
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "${RABBIT_PORT}:${RABBIT_PORT}"
+      - "${RABBIT_ADMIN_PORT}:${RABBIT_ADMIN_PORT}"
     environment:
-      RABBITMQ_DEFAULT_USER: wajaffnk
-      RABBITMQ_DEFAULT_PASS: wajaffnk
+      RABBITMQ_DEFAULT_USER: ${RABBIT_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBIT_DEFAULT_PASS}
     volumes:
       - rabbitmq-lib:/var/lib/rabbitmq/
       - rabbitmq-log:/var/log/rabbitmq
-      - type: bind
-        source: ./rabbitMq
-        target: /app
+      # - type: bind
+      #   source: ./rabbitMq
+      #   target: /app
     healthcheck:
       test: rabbitmq-diagnostics  check_port_connectivity
       interval: 10s
       timeout: 10s
       retries: 10
     networks:
-      - wfh-rabbit-inator
+      - haddoservnet
 
 networks:
-  wfh-rabbit-inator:
-    driver: bridge
-    name: rabbitmq-network
+  haddoservnet:
+    external: true
 
 volumes:
   rabbitmq-lib:

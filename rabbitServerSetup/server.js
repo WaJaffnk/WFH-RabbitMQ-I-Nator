@@ -1,6 +1,10 @@
 import amqp from 'amqplib';
+import dotenv from 'dotenv';
 
-const DEFAULT_RABBIT_URL = 'amqp://wajaffnk:wajaffnk@rabbitmq:5672/';
+console.log("=== SERVER.JS STARTED ===");
+dotenv.config();
+console.log("server file starting...");
+let DEFAULT_RABBIT_URL = process.env.DEFAULT_RABBIT_URL;
 
 async function connect() {
   try {
